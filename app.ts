@@ -2,7 +2,7 @@ import express from "express";
 import expressLayouts from "express-ejs-layouts";
 import session from "express-session";
 import path from "path";
-import passportMiddleware from './middleware/passportMiddleware';
+import passportMiddleware from "./middleware/passportMiddleware";
 
 const port = process.env.port || 8000;
 
@@ -31,6 +31,17 @@ app.use(express.json());
 app.use(expressLayouts);
 app.use(express.urlencoded({ extended: true }));
 passportMiddleware(app);
+
+declare global {
+  namespace Express {
+    interface User {
+      email: string;
+      name: string;
+      id: number;
+      password: string;
+    }
+  }
+}
 
 app.use((req, res, next) => {
   console.log(`User details are: `);
