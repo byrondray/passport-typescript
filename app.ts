@@ -1,8 +1,14 @@
 import express from "express";
 import expressLayouts from "express-ejs-layouts";
 import session from "express-session";
-import path from "path";
 import passportMiddleware from "./middleware/passportMiddleware";
+import flash from "connect-flash";
+import * as path from "path";
+import dotenv from "dotenv";
+
+dotenv.config({
+  path: path.relative(process.cwd(), path.join(__dirname, ".env")),
+});
 
 const port = process.env.port || 8000;
 
@@ -26,22 +32,11 @@ app.use(
 import authRoute from "./routes/authRoute";
 import indexRoute from "./routes/indexRoute";
 
-// Middleware for express
 app.use(express.json());
 app.use(expressLayouts);
+app.use(flash());
 app.use(express.urlencoded({ extended: true }));
 passportMiddleware(app);
-
-declare global {
-  namespace Express {
-    interface User {
-      email: string;
-      name: string;
-      id: number;
-      password: string;
-    }
-  }
-}
 
 app.use((req, res, next) => {
   console.log(`User details are: `);
@@ -57,6 +52,19 @@ app.use((req, res, next) => {
 
 app.use("/", indexRoute);
 app.use("/auth", authRoute);
+
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      name: string;
+      role: string;
+      email?: string;
+      password?: string;
+      emails?: Array<{ primary: boolean; value: string }>;
+    }
+  }
+}
 
 app.listen(port, () => {
   console.log(`🚀 Server has started on port ${port}`);
