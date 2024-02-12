@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+    <link href="styles/admin" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <h1 class="mt-4">Admin Dashboard</h1>
+      <p class="lead mb-3">Welcome <%= user.name %></p>
+      <div class="session-info">
+        <h2>All Sessions</h2>
+        <ul>
+          <% sessions.forEach(function(session, index) { %>
+          <h3>Session <%= index + 1 %></h3>
+          <li>
+            Session ID: <%= session.id %> User ID: <%= session.passport.user %>
+            <form action="/admin/revoke-session" method="POST">
+              <input type="hidden" name="sessionId" value="<%= session.id %>" />
+              <button type="submit" class="btn btn-danger">
+                Revoke Session
+              </button>
+            </form>
+          </li>
+          <% }); %>
+        </ul>
+      </div>
+
+      <a href="/auth/logout" class="btn btn-secondary">Logout</a>
+    </div>
+  </body>
+</html>

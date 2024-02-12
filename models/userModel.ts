@@ -1,6 +1,6 @@
-import { User } from ".././interfaces/index";
+import { User } from "../interfaces/index";
 
-const database = [
+const database: User[] = [
   {
     id: 1,
     name: "Jimmy Smith",
@@ -25,35 +25,37 @@ const database = [
 ];
 
 const userModel = {
-  findOne: (email: string) => {
+  findOne: async (email: string): Promise<User | null> => {
     const user = database.find((user) => user.email === email);
     return user || null;
   },
-  findById: (id: number) => {
+
+  findById: async (id: number): Promise<User | null> => {
     const user = database.find((user) => user.id === id);
     return user || null;
   },
-  addGithub: (user: {
+
+  addGithub: async (user: {
     id: number;
     name: string;
     role: string;
     email?: string;
-  }): User => {
+  }): Promise<User> => {
     const existingUser = database.find((u) => u.id === user.id);
     if (existingUser) {
       return existingUser;
+    } else {
+      const newUser: User = {
+        id: database.length + 1,
+        name: user.name,
+        email: user.email || "",
+        role: user.role,
+        password: "",
+      };
+
+      database.push(newUser);
+      return newUser;
     }
-
-    const newUser: User = {
-      id: database.length + 1,
-      name: user.name,
-      email: user.email || "",
-      role: "user",
-      password: "",
-    };
-
-    database.push(newUser);
-    return newUser;
   },
 };
 

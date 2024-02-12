@@ -20,3 +20,19 @@ export interface GitHubProfile {
   role: string;
   emails: Array<{ primary: boolean; value: string }>;
 }
+
+export interface Session {
+  cookie: {
+    originalMaxAge: number;
+    expires: string;
+    secure: boolean;
+    httpOnly: boolean;
+    path: string;
+  };
+  flash: string; 
+  passport?: {
+    user: number; 
+  };
+  id: string; 
+}
+

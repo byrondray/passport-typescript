@@ -4,8 +4,8 @@ import { forwardAuthenticated } from "../middleware/checkAuth";
 import flash from "connect-flash";
 
 const router = express.Router();
-
 router.use(flash());
+
 
 router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("login", {
@@ -36,10 +36,14 @@ router.get(
 );
 
 router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) console.log(err);
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/");
+    }
+    res.clearCookie("connect.sid");
+    res.redirect("/auth/login");
   });
-  res.redirect("/auth/login");
 });
 
 export default router;

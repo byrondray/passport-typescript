@@ -11,19 +11,18 @@ const localStrategy = new LocalStrategy(
     usernameField: "email",
     passwordField: "password",
   },
-  (email, password, done) => {
-    const user = getUserByEmailIdAndPassword(email, password);
-    return user
-      ? done(null, user)
-      : done(null, false, {
-          message: "Your login details are not valid. Please try again",
-        });
+  async (email, password, done) => { 
+    try {
+      const user = await getUserByEmailIdAndPassword(email, password); 
+      return user
+        ? done(null, user)
+        : done(null, false, { message: "Your login details are not valid. Please try again" });
+    } catch (error) {
+      return done(error);
+    }
   }
 );
 
-/*
-FIX ME (types) 😭
-*/
 passport.serializeUser(function (
   user: Express.User,
   done: (err: any, id?: number) => void
@@ -31,18 +30,16 @@ passport.serializeUser(function (
   done(null, user.id);
 });
 
-/*
-FIX ME (types) 😭
-*/
-passport.deserializeUser(function (
-  id: number,
-  done: (err: any, user?: Express.User | false | null) => void
-) {
-  let user = getUserById(id);
-  if (user) {
-    done(null, user);
-  } else {
-    done(null, false);
+passport.deserializeUser(async (id: number, done) => {
+  try {
+    const user = await getUserById(id); 
+    if (user) {
+      done(null, user); 
+    } else {
+      done(null, false); 
+    }
+  } catch (error) {
+    done(error); 
   }
 });
 

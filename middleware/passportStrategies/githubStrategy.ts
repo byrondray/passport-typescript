@@ -42,19 +42,20 @@ const githubStrategy = new GitHubStrategy(
   }
 );
 
-passport.serializeUser(function (user, done) {
+passport.serializeUser(function (user: Express.User, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(function (
-  id: number,
-  done: (err: any, user?: Express.User | false | null) => void
-) {
-  let user = getUserById(id);
-  if (user) {
-    done(null, user);
-  } else {
-    done(null, false);
+passport.deserializeUser(async (id: number, done) => {
+  try {
+    const user = await getUserById(id); 
+    if (user) {
+      done(null, user); 
+    } else {
+      done(null, false); 
+    }
+  } catch (error) {
+    done(error); 
   }
 });
 
